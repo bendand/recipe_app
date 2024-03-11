@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3><b> shopping list </b></h3>
+
+{% for ingredient in shopping_list_ingredients %}
+
+    <h5>{{ ingredient[0] }} - {{ ingredient[1] }} {{ ingredient[2] }}</h5>
+
+{% endfor %}
+
+
+{% endblock %}

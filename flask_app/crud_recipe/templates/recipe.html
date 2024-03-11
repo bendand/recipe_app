@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3> {{ message }} </h3>
+
+<div class="jumbotron">
+  <h1>{{ recipe_name }}</h1>
+
+  <h6>Submitted: {{ recipe.date.strftime('%B %d, %Y') }}</h6>
+<p>
+  <br>
+</p>
+<div>
+  <h3>Ingredients:</h3>
+</div>
+
+<div>
+  {% for ingredient in recipe_ingredients %}
+  <div>
+  <h4>{{ ingredient[0] }} -- {{ ingredient[1] }} {{ ingredient[2] }}</h4>
+  </div>
+  {% endfor %}
+</div>
+<div>
+  <a class="btn btn-secondary" href="{{ url_for('recipes.update', recipe_id=recipe.id) }}">Update</a>
+  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del_modal" href="{{ url_for('recipes.delete_recipe', recipe_id=recipe.id) }}">Delete</button>
+</div>
+
+  <!-- how to iterate through the ingredients in a recipe? -->
+
+  
+
+
+
+  <!-- Modal for Pop Up-->
+  {# https://getbootstrap.com/docs/4.1/components/modal/ #}
+  {# Notice how the link with the id to the button above! #}
+  <div class="modal" tabindex="-1" role="dialog" id="del_modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Recipe Pop up Modal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this recipe?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+          <form action="{{ url_for('recipes.delete_recipe', recipe_id=recipe.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+
+
