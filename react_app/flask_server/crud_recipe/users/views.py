@@ -1,0 +1,174 @@
+from flask import render_template, url_for, flash, redirect, request, Blueprint, Flask, send_from_directory, make_response
+from flask_login import login_user, current_user, logout_user, login_required
+from crud_recipe import db
+from crud_recipe.reducer_function import recipe_reducer
+from werkzeug.security import generate_password_hash,check_password_hash
+from crud_recipe.models import User, Ingredient, Recipe, RecipeToIngredient
+from crud_recipe.users.forms import RegistrationForm, LoginForm, UpdateUserForm
+from flask.json import jsonify
+from crud_recipe.users.forms import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField, TextAreaField, DateField, BooleanField
+from wtforms.validators import DataRequired, Email, EqualTo
+# from flask_cors import CORS
+
+# logging.getLogger('flask_cors').level = logging.DEBUG
+
+import pint
+from simple_test import test
+from pint import UnitRegistry
+from pint.errors import UndefinedUnitError
+
+user_views = Blueprint('users', __name__, url_prefix='/users')
+
+
+@user_views.route('/register', methods=['GET', 'POST', 'OPTIONS'])
+def register():
+
+    form_email = request.form['email']
+    form_username = request.form['username']
+    form_password = request.form['password']
+
+    existing_user = User.query.filter_by(email=form_email).first()
+
+    if existing_user:
+        return jsonify({"message": "user already exists!"}), 409
+
+    else: 
+        user = User(email=form_email,
+                    username=form_username,
+                    password=form_password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify(success=True, userEmail=user.email, username=user.username, userId=user.id), 200
+
+        # try:
+
+        # except Exception as e:
+        #     return jsonify({"message": str(e)}), 400
+
+    
+
+@user_views.route('/login', methods=['GET', 'POST'])
+def login():
+
+    # request.args or request.json?
+    form_password = request.form['password']
+    form_username = request.form['username']
+
+    # Grab the user from our User Models table
+    user = User.query.filter_by(username=form_username).first()
+
+    if user:
+        return jsonify(success=True, userEmail=user.email, username=user.username, userId=user.id), 200
+    else: 
+        return jsonify(success=False), 404
+
+    # Check that the user was supplied and the password is right
+    # The verify_password method comes from the User object
+    # https://stackoverflow.com/questions/2209755/python-operation-vs-is-not
+    return(jsonify(login_user(user)))
+
+
+    if user.check_password(json_password.data) and user is not None:
+        #Log in the user
+
+        # is a user logged in relevant to the server and the client? relevant to local storage?
+        return(jsonify(login_user(user)))
+        flash('Logged in successfully.')
+
+        # this can be handled by the then() function in the client right?
+        next = request.args.get('next')
+
+        # same with this right?
+        if next == None or not next[0]=='/':
+            next = url_for('core.index')
+
+        # return redirect(next)
+   
+
+
+
+
+@user_views.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('core.index'))
+
+
+@user_views.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+
+    form = UpdateUserForm()
+
+    if form.validate_on_submit():
+
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('User Account Updated')
+        return redirect(url_for('users.account'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+        return render_template('account.html', form=form)
+
+
+
+@user_views.route("/<username>", methods=['GET', 'POST'])
+def view_users_recipes(username):
+    
+    user = User.query.filter_by(username=username).first_or_404()
+    recipes = Recipe.query.filter_by(user_id=user.id).order_by(Recipe.date.desc()).all()
+
+    return jsonify({
+        "recipes": [recipes]
+    })
+
+
+@user_views.route("/<username>/generatelist", methods=['GET', 'POST'])
+def generate_shopping_list(username):
+
+    if request.method == 'GET': 
+   
+        user = User.query.filter_by(username=username).first_or_404()
+        recipes = Recipe.query.filter_by(user_id=user.id).order_by(Recipe.date.desc()).all()
+
+        return render_template('generate_shopping_list.html', recipes=recipes, current_user=user)
+
+    if request.method == 'POST':
+
+        form_items = request.form.items()
+
+        recipe_id_list = []
+
+        for k, v in form_items:
+            recipe_id = int(k)
+            recipe_id_list.append(recipe_id)
+
+        # finds all ingredients from a list of recipe ids
+        recipe_ingredients_result = (
+                    db.session.query(Ingredient.name, RecipeToIngredient.ingredient_quantity, RecipeToIngredient.ingredient_measurement)
+                    .join(Ingredient, RecipeToIngredient.ingredient_id == Ingredient.id)
+                    .where(RecipeToIngredient.recipe_id.in_(recipe_id_list))
+                    ).all()
+        
+
+        # variable holds the returned result of our reducer function 
+        shopping_list_ingredients = recipe_reducer(recipe_ingredients_result)
+
+        # sorting our items alphabetically
+        sorted_ingredients = sorted(shopping_list_ingredients)
+ 
+        return render_template('new_shopping_list.html', shopping_list_ingredients=sorted_ingredients)
+
+
+
+
+
+
+
