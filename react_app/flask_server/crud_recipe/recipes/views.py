@@ -9,16 +9,11 @@ from pint import UnitRegistry, DimensionalityError
 from crud_recipe.validate_recipe_form import ValidationError,validate_add_recipe_form
 import json
 from flask.json import jsonify
-
 from pint import UnitRegistry
-
-
-# from flask_cors import CORS
-
+from flask_json import FlaskJSON, JsonError, json_response, as_json
 
 
 recipe_views = Blueprint('recipes',__name__, url_prefix='/recipes')
-
 
 @recipe_views.route("/add", methods=['GET', 'POST'])
 # @login_required
@@ -69,35 +64,33 @@ def add_recipe():
         
 
     return jsonify(success=True), 200
-    
-
-
-@recipe_views.route("/generatelist/<username>")
-def generate_shopping_list(username):
-    
-    user = User.query.filter_by(username=username).first_or_404()
-    recipes = Recipe.query.filter_by(user_id=user.id).all()
-
-    return render_template('generate_shopping_list.html', recipes=recipes)
 
 
 
 # int: makes sure that the recipe_id gets passed as in integer
 # instead of a string so we can look it up later.
-@recipe_views.route('/<int:recipe_id>')
-def recipe_view(recipe_id):
+@as_json
+@recipe_views.route('/viewrecipeingredients')
+def recipe_view():
+
+    recipe_id = request.args.get('recipeId', '')
+    print(recipe_id)
+
     # grab the requested recipe by id number or return 404
     recipe = Recipe.query.get_or_404(recipe_id)
+
     # need some way below here to make all the ingredients in the recipe given above available for enumeration in html
     recipe_ingredients_query = (
                         db.session.query(Ingredient.name, RecipeToIngredient.ingredient_quantity, RecipeToIngredient.ingredient_measurement)
                         .join(Ingredient, RecipeToIngredient.ingredient_id == Ingredient.id)
                         .where(RecipeToIngredient.recipe_id == recipe.id)
                         )
-    # print(recipe_ingredients_query)
+                    
     recipe_ingredients = recipe_ingredients_query.all()
-    return render_template('recipe.html', recipe_name=recipe.name,
-                            submit_date=recipe.date, recipe=recipe, recipe_ingredients=recipe_ingredients)
+       
+    
+    return recipe_ingredients, 200
+
 
 @recipe_views.route("/<int:recipe_id>/update", methods=['GET', 'POST'])
 @login_required

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { authenticationActions } from "../store";
 import { useSelector } from 'react-redux';
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Outlet } from "react-router-dom";
 
 const addRecipeURL = 'http://127.0.0.1:8000/recipes/add';
 
@@ -74,7 +74,10 @@ export default function AddRecipe() {
                     console.log(response);
                     if (response.status === 200) {
                         alert("Recipe added");
-                        // loginHandler();
+                        setRecipeState({
+                            name: '',
+                            ingredients: []
+                        })
                     }
                 })
             } catch (error) {
@@ -135,6 +138,7 @@ export default function AddRecipe() {
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
+                <Outlet />
                 <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
             </nav>
             <p>Enter your recipe!</p>
@@ -143,7 +147,7 @@ export default function AddRecipe() {
             )}
             <form>
                 <label>Recipe name:</label>
-                <input type="text" value={recipeName} onChange={handleRecipeNameChange} ></input>
+                <input type="text" value={recipeName} onChange={handleRecipeNameChange} defaultValue='' ></input>
                 <br />
                 <label>
                     Enter the ingredient's name, the quantity, and the measurement

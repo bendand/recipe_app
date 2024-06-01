@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
+from flask_json import FlaskJSON, JsonError, json_response, as_json
 
 ## imports for add_ingredients
 
@@ -15,6 +16,7 @@ from pint.errors import UndefinedUnitError
 
 app = Flask(__name__)
 CORS(app)
+FlaskJSON(app)
 
 
 @app.before_request

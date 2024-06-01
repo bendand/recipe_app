@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
 
 export default function Account() {
     const currentUser = useSelector(state => state.currentUser.payload);
@@ -11,10 +11,20 @@ export default function Account() {
     }
 
     return (
-        <div>
-            <p><strong>{currentUser['email']}'s account</strong></p>
-            <p>shopping with us since </p>
-            <p></p>
-        </div>
-    )
+        <>
+            <nav>
+                <Link to="/logout" className='nav-element'>Log Out</Link> 
+                <Link to="/account" className='nav-element'>Account</Link>
+                <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
+                <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
+                <Outlet />
+                <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
+            </nav>
+            <div>
+                <p><strong>{currentUser['username']}'s account</strong></p>
+                <p>shopping with us since </p>
+                <p></p>
+            </div>
+        </>
+    );
 }

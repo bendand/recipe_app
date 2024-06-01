@@ -28,10 +28,6 @@ export default function Login() {
     const passwordIsInvalid =
         didEdit.password && enteredValues.password.trim().length < 6;
 
-    const loginHandler = () => {
-        dispatch(authenticationActions.login(enteredValues));
-        // useAuth(enteredValues);
-    }
 
     const navigateHandler = () => {
         navigate('/dashboard')

@@ -12,6 +12,7 @@ import Account from './components/Account.jsx';
 import AddRecipe from './components/AddRecipe.jsx';
 import UserRecipes from './components/UserRecipes.jsx';
 import GenerateList from './components/GenerateList.jsx';
+import UserRecipesRecipe from './components/UserRecipesRecipe';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -23,7 +24,13 @@ const router = createBrowserRouter([
   { path: '/dashboard', element: <Dashboard /> },
   { path: '/account', element: <Account /> },
   { path: '/addrecipe', element: <AddRecipe /> },
-  { path: '/myrecipes', element: <UserRecipes /> },
+  { 
+    path: '/myrecipes', 
+    element: <UserRecipes />,
+    children: [
+      { path: '/myrecipes/recipedetails', element: <UserRecipesRecipe /> },
+    ]
+  },
   { path: '/generatelist', element: <GenerateList /> },
 
 ]);
