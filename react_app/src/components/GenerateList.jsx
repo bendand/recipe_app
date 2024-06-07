@@ -4,8 +4,10 @@ import GenerateListRecipe from './GenerateListRecipe';
 
 import axios from "axios";
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
+import { recipeSelectionActions } from '../store/index.js'
+
 
 const userRecipesURL = 'http://127.0.0.1:8000/users/myrecipes';
 
@@ -16,9 +18,12 @@ export default function GenerateList() {
     const currentUser = useSelector(state => state.authentication.currentUser.payload);
     const recipeIdList = useSelector(state => state.recipeSelection.recipeIdsForShoppingList);
 
+    const [errorMessage, setErrorMessage] = useState('')
     const [userRecipes, setUserRecipes] = useState([]);
     const [shoppingListIngredients, setShoppingListIngredients] = useState(null);
     const navigate = useNavigate();
+
+    
 
     useEffect(() => {
         if (currentUser === undefined) {
@@ -27,17 +32,11 @@ export default function GenerateList() {
             return
         }
 
-        // if (recipeIdList === undefined) {
-        //     console.log('recipeIdList is undefined');
-        // } else {
-        //     console.log('recipe id list: ' + recipeIdList.entries());
-        // }
-
         const fetchUserRecipesAPI = () => {
             try {
                 axios.get(userRecipesURL, {
                     params: {
-                        userId: currentUser.userId
+                        userId: currentUser['userId'],
                     }
                 })
                 .then(function (response) {
@@ -50,19 +49,26 @@ export default function GenerateList() {
                 })
             } catch (error) {
                 console.log(error);
-                alert('request failed');
             }
 
             return
         }
 
         fetchUserRecipesAPI();
+
+        return () => setUserRecipes([]);
+            
     }, [])
 
     
 
     function handleSubmitRecipes(event) {
         event.preventDefault();
+
+        if (recipeIdList.length === 0) {
+            setErrorMessage('you must have at least one recipe added for a shopping list');
+            return
+        }
 
         const addRecipesToShoppingListAPI = () => {
             try {
@@ -89,7 +95,6 @@ export default function GenerateList() {
     return (
         <>
             <nav>
-                <Link to="/logout" className='nav-element'>Log Out</Link> 
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
@@ -99,6 +104,9 @@ export default function GenerateList() {
             {shoppingListIngredients === null ? (
                 <div>
                     <h4>choose recipes to add to your shopping list</h4>
+                    {errorMessage !== '' && (
+                        <p>*{errorMessage}</p>
+                    )}
                     <form id='recipe-list' name='recipe-list'>
                         <ul>
                             {userRecipes.map((recipe) => (
@@ -107,8 +115,6 @@ export default function GenerateList() {
                                         id={recipe.id}
                                         name={recipe.name}
                                         date={recipe.date}
-                                        key={recipe.id}
-                                        onClick={() => toggleCheckboxClick(recipe.id)}
                                         />
                                 </div>
                             ))}

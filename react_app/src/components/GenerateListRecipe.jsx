@@ -8,27 +8,20 @@ import { useEffect, useState } from 'react';
 
 const getRecipeIngredientsURL = 'http://127.0.0.1:8000/recipes/viewrecipeingredients';
 
-export default function GenerateListRecipe({ id, name, date, onClick, checkedValue }) {
+export default function GenerateListRecipe({ id, name, date }) {
     const [ingredients, setIngredients] = useState([]);
     const [checked, setChecked] = useState(false);
-    const recipeIdList = useSelector(state => state.recipeSelection.recipeIdsForShoppingList);
 
     const dispatch = useDispatch();
-
-    // console.log(id + ' checked status is ' + checked);
-    // const navigate = useNavigate();
-
     const dateFormatted = dateFormat(date, "dddd, mmmm dS, yyyy");
 
-    // useEffect(() => {
-    //     if (recipeIdList === undefined) {
-    //         console.log('recipeIdList is undefined');
-    //     } else {
-    //         console.log('recipe id list: ' + JSON.stringify(recipeIdList));
-    //     }
-    // })
+    useEffect(() => {
+        return () => dispatch(recipeSelectionActions.removeRecipe(id));
+    }, []);
 
-    function viewRecipeDetails(recipeId) {
+    function handleViewRecipeDetails(recipeId, event) {
+        event.preventDefault();
+
         const fetchRecipeIngredientsAPI = () => {
             try {
                 axios.get(getRecipeIngredientsURL, {
@@ -71,7 +64,7 @@ export default function GenerateListRecipe({ id, name, date, onClick, checkedVal
             {ingredients.length === 0 && (
                 <div key={id}>
                     <li key={id}>{name}, added {dateFormatted}</li>
-                    <button onClick={() => viewRecipeDetails(id)}>view recipe details</button>
+                    <button onClick={(event) => handleViewRecipeDetails(id, event)}>view recipe details</button>
                     <input 
                         type="checkbox" 
                         id={id}
@@ -94,7 +87,7 @@ export default function GenerateListRecipe({ id, name, date, onClick, checkedVal
                         id={id}
                         name={id} 
                         onClick={() => toggleCheckboxClick(id)}
-                        value={checkedValue}
+                        value={checked}
                     />
                     <label>add recipe</label>
                 </div>

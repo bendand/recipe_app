@@ -16,7 +16,6 @@ from flask_json import FlaskJSON, JsonError, json_response, as_json
 recipe_views = Blueprint('recipes',__name__, url_prefix='/recipes')
 
 @recipe_views.route("/add", methods=['GET', 'POST'])
-# @login_required
 def add_recipe():
 
     data = request.get_json()
@@ -35,6 +34,7 @@ def add_recipe():
 
     recipe_ingredients = data['ingredients']
 
+    # iterating through 
     for ingredient in recipe_ingredients:
         ingredient_name = ingredient['name']
         ingredient_quantity = float(ingredient['quantity'])
@@ -48,8 +48,8 @@ def add_recipe():
 
             # create an instance of ingredient and commit 
             ingredient = Ingredient(name=ingredient_name)
-            # print(ingredient),
-
+            
+            # commits this so we can identify our ingredient by primary key
             db.session.add(ingredient)
             db.session.commit()
 
@@ -70,11 +70,11 @@ def add_recipe():
 # int: makes sure that the recipe_id gets passed as in integer
 # instead of a string so we can look it up later.
 @as_json
-@recipe_views.route('/viewrecipeingredients')
+@recipe_views.route('/viewrecipeingredients', methods=['GET'])
 def recipe_view():
 
+    # grabs our recipe id from the request
     recipe_id = request.args.get('recipeId', '')
-    print(recipe_id)
 
     # grab the requested recipe by id number or return 404
     recipe = Recipe.query.get_or_404(recipe_id)
@@ -92,29 +92,18 @@ def recipe_view():
     return recipe_ingredients, 200
 
 
-@recipe_views.route("/<int:recipe_id>/update", methods=['GET', 'POST'])
-@login_required
-def update(recipe_id):
+@recipe_views.route("/updaterecipe", methods=['POST'])
+def update():
 
-    old_recipe = Recipe.query.get_or_404(recipe_id)
-    update_recipe_form = RecipeForm()
-    title = 'Update Recipe'
+    request_data = request.data
+    json_loads_data = json.loads(request_data)
 
-    if not update_recipe_form.validate_on_submit():
-        update_recipe_form.recipe_name.data = old_recipe.name
-        return render_template('enter_recipe.html', form=update_recipe_form, title=title, recipe_name=update_recipe_form.recipe_name.data)
+    old_recipe_id = json_loads_data['recipeId']
+    new_ingredients = json_loads_data['ingredientsCopy']
 
-    recipe_name = update_recipe_form.recipe_name.data
+    old_recipe = Recipe.query.get_or_404(old_recipe_id)
 
-    updated_recipe = Recipe(name=recipe_name, user_id=current_user.id)
-
-    # grabs the data from the enter ingredients field, splits it into lines, and makes it moldable
-    recipe_data = update_recipe_form.enter_ingredients.data.splitlines()
-
-    try:
-        clean_ingredients = validate_add_recipe_form(recipe_data)
-    except ValidationError as error:
-        return render_template("enter_recipe.html", form=update_recipe_form, errors=error.errors)
+    updated_recipe = Recipe(name=old_recipe.name, user_id=old_recipe.user_id)
             
     # deletes our old recipe and all of our ingredients that are linked to the old recipe
     db.session.delete(old_recipe)
@@ -125,10 +114,10 @@ def update(recipe_id):
     db.session.add(updated_recipe)
     db.session.commit()
 
-    for ingredient_name, quantity_measurement in clean_ingredients.items():
-        
-        ingredient_quantity = quantity_measurement[0]
-        ingredient_measurement = quantity_measurement[1]
+    for ingredient in new_ingredients:
+        ingredient_name = ingredient[0]
+        ingredient_quantity = ingredient[1]
+        ingredient_measurement = ingredient[2]
     
         # produces a name or a none value in this variable
         ingredient = Ingredient.query.filter_by(name=ingredient_name).first()
@@ -151,25 +140,31 @@ def update(recipe_id):
         db.session.add(recipe_to_ingredient)
         db.session.commit()
 
-    success_message = 'your recipe, ' + recipe_name + ', was updated!'
-    return render_template('enter_recipe.html', form=update_recipe_form, success_message=success_message)
+    return jsonify(message="recipe updated"), 200
     
 
 
-@recipe_views.route("/<int:recipe_id>/delete", methods=['POST'])
-@login_required
-def delete_recipe(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
+@recipe_views.route("/deleterecipe", methods=['POST'])
+def delete_recipe():
 
-    delete_recipe_stmt = delete(Recipe).where(Recipe.id == recipe.id)
-    delete_recipe_ingredients_stmt = delete(RecipeToIngredient).where(RecipeToIngredient.recipe_id == recipe.id)
+    # gets the parses the json string data and converts it to a python dictionary
+    request_data = request.data
+    json_loads_data = json.loads(request_data)
+
+    # gets the recipe id for deletion out of the request
+    recipe_id = json_loads_data['recipeIdDeleting']
+
+    # heres the recipe
+    recipe_for_deletion = Recipe.query.get_or_404(recipe_id)
+
+    # statement that ques deletion of the record of the recipe in the recipes table 
+    delete_recipe_stmt = delete(Recipe).where(Recipe.id == recipe_for_deletion.id)
+    # statement that ques the deletion of all of the records 
+    delete_recipe_ingredients_stmt = delete(RecipeToIngredient).where(RecipeToIngredient.recipe_id == recipe_for_deletion.id)
     
+    # executes and commits these statements
     db.session.execute(delete_recipe_stmt)
     db.session.execute(delete_recipe_ingredients_stmt)
     db.session.commit()
 
-    updated_user_recipes = Recipe.query.filter_by(user_id=current_user.id).all()
-
-    message = 'Recipe deleted'
-
-    return render_template('user_recipes.html', message=message, user=current_user, recipes=updated_user_recipes)
+    return jsonify(message='recipe successfully deleted'), 200

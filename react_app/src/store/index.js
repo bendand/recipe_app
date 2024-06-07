@@ -27,11 +27,12 @@ const authenticationSlice = createSlice({
             }
         },
         logout(state) {
-            state.currentUser = {
-                'username': null,
-                'email': null,
-                'userId': null
-            }
+            // state.currentUser = {
+            //     'username': null,
+            //     'email': null,
+            //     'userId': null
+            // }
+            state.currentUser = initialAuthState.currentUser
         },
     }
 });
@@ -57,6 +58,10 @@ const recipeSelectionSlice = createSlice({
             });
             state.recipeIdsForShoppingList = newIdList;
         },
+
+        clearRecipes(state) {
+            state.recipeIdsForShoppingList = [];
+        }
     }
 },);
 

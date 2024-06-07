@@ -13,7 +13,9 @@ const measurementValues = ['tablespoon', 'teaspoon', 'milligram', 'cup', 'ounce'
 const sortedMeasurements = measurementValues.sort()
 
 export default function AddRecipe() {
-    const currentUser = useSelector(state => state.currentUser.payload);
+    const currentUser = useSelector(state => state.authentication.currentUser.payload);
+
+    const navigate = useNavigate();
     
     if (currentUser === undefined) {
         alert('your session has expired, you are being redirected to the homepage');
@@ -27,7 +29,7 @@ export default function AddRecipe() {
     const [errorMessage, setErrorMessage] = useState('');
     const [enteredIngredientValues, setEnteredIngredientValues] = useState({
         name: '',
-        quantity: '',
+        quantity: undefined,
         measurement: ''
     });
     const [recipeName, setRecipeName] = useState('');
@@ -134,11 +136,9 @@ export default function AddRecipe() {
     return (
         <div>
             <nav>
-                <Link to="/logout" className='nav-element'>Log Out</Link> 
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
-                <Outlet />
                 <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
             </nav>
             <p>Enter your recipe!</p>
@@ -147,7 +147,7 @@ export default function AddRecipe() {
             )}
             <form>
                 <label>Recipe name:</label>
-                <input type="text" value={recipeName} onChange={handleRecipeNameChange} defaultValue='' ></input>
+                <input type="text" value={recipeName} onChange={handleRecipeNameChange} ></input>
                 <br />
                 <label>
                     Enter the ingredient's name, the quantity, and the measurement
@@ -155,10 +155,10 @@ export default function AddRecipe() {
                 <br />
                 <input 
                     label="name"
-                    type="name"
+                    type="text"
                     name="name"
                     id="name"
-                    onChange={(event) => handleInputChange('name', event.target.value)}
+                    onChange={event => handleInputChange('name', event.target.value)}
                     value={enteredIngredientValues.name}
                 />
                 <input 
@@ -166,17 +166,18 @@ export default function AddRecipe() {
                     name="quantity"
                     id="quantity" 
                     type="number"
-                    onChange={(event) => handleInputChange('quantity', event.target.value)}
+                    onChange={event => handleInputChange('quantity', event.target.value)}
                     value={enteredIngredientValues.quantity} 
                 />
                 <select 
                     label="measurement"
                     name="measurement"
+                    type="text"
                     id="measurement"
-                    onChange={(event) => handleInputChange('measurement', event.target.value)}
+                    onChange={event => handleInputChange('measurement', event.target.value)}
                     value={enteredIngredientValues.measurement}
                 >
-                    <option defaultValue="" disabled hidden></option>
+                    <option disabled hidden></option>
                     {sortedMeasurements.map((measurement) => (
                         <option key={measurement} id={measurement}>{measurement}</option>
                     ))}

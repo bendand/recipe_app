@@ -1,3 +1,5 @@
+import Input from "./Input";
+
 import { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -42,7 +44,6 @@ export default function Register() {
                         registrationHandler();
                     }
                 })
-                // console.log(formData)
             } catch (error) {
                 console.log(error);
                 if (!error?.response) {
@@ -67,45 +68,36 @@ export default function Register() {
             <form onSubmit={handleSubmit} id="register-form">
                 <h2>Welcome!</h2>
                 <p>We just need some information to get you started.</p>
-
-                <div>
-                    <label htmlFor="email">Email: </label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="username">Username: </label>
-                    <input
-                        id="username"
-                        type="username"
-                        name="username"
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password">Password: </label>
-                    <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        minLength={6}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="confirm-password">Re-enter password: </label>
-                    <input
-                        id="confirm-password"
-                        type="confirm-password"
-                        name="confirm-password"
-                        required
-                        minLength={6}
-                    />
-                </div>
+                <Input 
+                    label="Email: "
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                />
+                <Input 
+                    label="Username: "
+                    id="username"
+                    type="username"
+                    name="username"
+                    required
+                />
+                <Input 
+                    label="Password: "
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    minLength={6}
+                />
+                <Input 
+                    label="Confirm Password: "
+                    id="confirm-password"
+                    type="confirm-password"
+                    name="confirm-password"
+                    required
+                    minLength={6}
+                />
                 <div>
                     {passwordsAreNotEqual && <p>Passwords must match</p>}
                 </div>
@@ -113,7 +105,6 @@ export default function Register() {
                     <button type="reset">Reset</button>
                     <button type="submit">Sign Up</button>
                 </p>
-
             </form>
         </div>
     );

@@ -56,22 +56,19 @@ def login():
     # Grab the user from our User Models table
     user = User.query.filter_by(username=form_username).first()
 
-    if user:
+    if user and user.check_password(form_password):
+        print("great success")
         return jsonify(success=True, userEmail=user.email, username=user.username, userId=user.id), 200
+    elif user and not user.check_password(form_password):
+        print('username is right, password is wrong')
+        return jsonify(success=False), 401
     else: 
-        return jsonify(success=False), 404
+        print('user does not exist')
+        return jsonify(success=False, message="Your credentials are invalid"), 404
 
-
-
-
-@user_views.route("/logout")
-def logout():
-    logout_user()
-    return redirect(url_for('core.index'))
 
 
 @user_views.route("/account", methods=['GET', 'POST'])
-@login_required
 def account():
 
     form = UpdateUserForm()
@@ -119,6 +116,7 @@ def generate_shopping_list():
     request_data = request.data
     json_loads_recipe_ids = json.loads(request_data)
     recipe_ids = json_loads_recipe_ids['recipeIds']
+
     
     # finds all ingredients from a list of recipe ids
     recipe_ingredients_result = (

@@ -1,8 +1,5 @@
 import { useFetch } from "../hooks/useFetch";
 
-
-import Recipes from "./Recipes";
-import Error from "./Error";
 import UserRecipesRecipe from "./UserRecipesRecipe";
 
 import { Link, useNavigate, Outlet } from 'react-router-dom';
@@ -18,33 +15,28 @@ const userRecipesURL = 'http://127.0.0.1:8000/users/myrecipes';
 
 export default function UserRecipes() {
     const [userRecipes, setUserRecipes] = useState([]);
-    const currentUser = useSelector(state => state.currentUser.payload);
-
+    const currentUser = useSelector(state => state.authentication.currentUser.payload);
     const navigate = useNavigate();
 
 
-    // for (const recipe of userRecipes) {
-    //     console.log(recipe);
-    // }
-
-
-    
-
-    // if (userRecipes !== []) {
-    //     // console.log('theres some recipes here');
-    //     for (var i = 0, l = userRecipes.length; i < l; i++) {
-    //         console.log(userRecipes.name);
-    //     }
-    // }
-
-    // console.log(userRecipes);
-
     useEffect(() => {
+        // if (currentUser === undefined) {
+        //     alert('your session has expired, you are being redirected to the homepage');
+        //     navigate('/');
+        // }
 
-        if (currentUser === undefined) {
-            alert('your session has expired, you are being redirected to the homepage');
-            navigate('/');
-        }
+        // which call to the backend is preferred?
+        // async function fetchUserRecipes() {
+        //     setIsFetching(true);
+        //     try {
+        //         const recipes = await fetchUserRecipes();
+        //         setUserRecipes(recipes);
+        //     } catch (error) {
+        //         setError({ message: error.message || 'Failed to fetch user recipes.'})
+        //     }
+
+        //     setIsFetching(false);
+        // }
 
         const fetchUserRecipesAPI = () => {
             try {
@@ -64,15 +56,13 @@ export default function UserRecipes() {
             } catch (error) {
                 console.log(error);
                 alert('request failed');
-                // if (!error?.response) {
-                //     setErrorMessage('No Server Response');
-                // } else {
-                //     setErrorMessage('Fetching user recipes failed');
-                // }
             }
         }
 
         fetchUserRecipesAPI();
+
+        return () => setUserRecipes([]);
+
     }, [])
 
     // const { 
@@ -86,14 +76,10 @@ export default function UserRecipes() {
     //     return <Error title="An error occurred!" message={error.message}/>
     // }
 
-    // function handleSelectRecipe() {
-    //     return 
-    // }
 
     return (
         <div>
             <nav>
-                <Link to="/logout" className='nav-element'>Log Out</Link> 
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>

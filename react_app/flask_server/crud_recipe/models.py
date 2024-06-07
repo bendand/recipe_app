@@ -36,7 +36,6 @@ class User(db.Model, UserMixin):
         }
 
     def check_password(self,password):
-        # https://stackoverflow.com/questions/23432478/flask-generate-password-hash-not-constant-output
         return check_password_hash(self.password_hash,password)
 
     def __repr__(self):

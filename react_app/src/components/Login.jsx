@@ -7,36 +7,41 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Input from './Input.jsx';
 import { authenticationActions } from '../store/index.js';
+import { useInput } from '../hooks/useInput.js';
 
 import axios from 'axios';
+import { isNotEmpty, hasMinLength } from '../util/validation.js';
 
 const loginURL = 'http://127.0.0.1:8000/users/login';
 
 export default function Login() {
-    const navigate = useNavigate();
+    const {value: usernameValue, 
+            handleInputChange: handleUsernameChange, 
+            handleInputBlur: handleUsernameBlur,
+            hasError: usernameHasError
+        } = useInput('', (value) => {
+            // can expound upon validation functions here
+            return isNotEmpty(value);
+        });
 
-    const [enteredValues, setEnteredValues] = useState({
-        username: '',
-        password: '',
-    });
-    const [didEdit, setDidEdit] = useState({
-        username: false,
-        password: false,
-    });
+    const {value: passwordValue,
+            handleInputChange: handlePasswordChange,
+            handleInputBlur: handlePasswordBlur,
+            hasError: passwordHasError
+        } = useInput('', (value) => {
+            // can expound upon validation functions here
+            return isNotEmpty(value) && hasMinLength(value, 6);
+        })
+
+    const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
     const dispatch = useDispatch();
-    const passwordIsInvalid =
-        didEdit.password && enteredValues.password.trim().length < 6;
 
-
-    const navigateHandler = () => {
-        navigate('/dashboard')
-    }
 
     function handleSubmit(event) {
         event.preventDefault();
         
-        if (passwordIsInvalid) {
+        if (usernameHasError || passwordHasError) {
             return;
         }
 
@@ -45,7 +50,6 @@ export default function Login() {
                 axios.post(loginURL, document.querySelector('#login-form'))
                 .then(function (response) {
                     if (response.status === 200) {
-                        // here current user id needs to be captured and sent to our state management system
                         const userPayload = {
                             'username': response.data.username,
                             'password': response.data.userEmail,
@@ -53,42 +57,24 @@ export default function Login() {
                         }
                         dispatch(authenticationActions.login(userPayload));
                         alert("Login successful!");
-                        navigateHandler();
+                        navigate('/dashboard');
+                    } else if (response.status === 401) {
+                        setErrorMessage('Password is incorrect');
+                    } else if (response.status === 404) {
+                        setErrorMessage('We do not recognize your username');
+                    } else if (!response.status) {
+                        setErrorMessage('The server did not respond');
                     }
                 })
             } catch (error) {
-                if (!error?.response) {
-                    setErrorMessage('No Server Response');
-                } else if (error.response?.status === 400) {
-                    setErrorMessage('Missing username or password');
-                } else if (error.response?.status === 401) {
-                    setErrorMessage('Unauthorized')
-                } else {
-                    setErrorMessage('Login failed');
-                }
+                console.log(error);
+                console.log(error.message);
             }
         }
 
         postAPI();
     }
 
-    function handleInputChange(identifier, value) {
-        setEnteredValues((prevValues) => ({
-        ...prevValues,
-        [identifier]: value,
-        }));
-        setDidEdit((prevEdit) => ({
-        ...prevEdit,
-        [identifier]: false,
-        }));
-    }
-
-    function handleInputBlur(identifier) {
-        setDidEdit((prevEdit) => ({
-        ...prevEdit,
-        [identifier]: true,
-        }));
-    }
 
     return (
         <div>
@@ -98,32 +84,26 @@ export default function Login() {
             )}
             <form onSubmit={handleSubmit} id="login-form">
                 <h2>Login</h2>
-
-                <div className="control-row">
-                    <Input
-                        label="Username"
-                        id="username"
-                        type="username"
-                        name="username"
-                        onBlur={() => handleInputBlur('username')}
-                        onChange={(event) => handleInputChange('username', event.target.value)}
-                        value={enteredValues.username}
-                    />
-
-                    <Input
-                        label="Password"
-                        id="password"
-                        type="password"
-                        name="password"
-                        onChange={(event) =>
-                            handleInputChange('password', event.target.value)
-                        }
-                        onBlur={() => handleInputBlur('password')}
-                        value={enteredValues.password}
-                        error={passwordIsInvalid && 'Please enter a valid password!'}
-                    />
-                </div>
-
+                <Input
+                    label="Username: "
+                    id="username"
+                    type="username"
+                    name="username"
+                    onBlur={handleUsernameBlur}
+                    onChange={handleUsernameChange}
+                    value={usernameValue}
+                    error={usernameHasError && 'Please enter a valid username'}
+                />
+                <Input
+                    label="Password: "
+                    id="password"
+                    type="password"
+                    name="password"
+                    onChange={handlePasswordChange}
+                    onBlur={handlePasswordBlur}
+                    value={passwordValue}
+                    error={passwordHasError && 'Passwords must be at least 6 characters'}
+                />
                 <p className="form-actions">
                     <button className="button button-flat">Reset</button>
                     <button className="button">Login</button>
