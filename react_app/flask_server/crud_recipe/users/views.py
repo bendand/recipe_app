@@ -49,21 +49,19 @@ def register():
 @user_views.route('/login', methods=['GET', 'POST'])
 def login():
 
-    # request.args or request.json?
     form_password = request.form['password']
+    print(form_password)
     form_username = request.form['username']
+    print(form_username)
 
     # Grab the user from our User Models table
     user = User.query.filter_by(username=form_username).first()
 
     if user and user.check_password(form_password):
-        print("great success")
         return jsonify(success=True, userEmail=user.email, username=user.username, userId=user.id), 200
     elif user and not user.check_password(form_password):
-        print('username is right, password is wrong')
-        return jsonify(success=False), 401
+        return jsonify(success=False, message='username is right, password is wrong'), 401
     else: 
-        print('user does not exist')
         return jsonify(success=False, message="Your credentials are invalid"), 404
 
 

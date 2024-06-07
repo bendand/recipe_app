@@ -58,13 +58,17 @@ export default function Login() {
                         dispatch(authenticationActions.login(userPayload));
                         alert("Login successful!");
                         navigate('/dashboard');
-                    } else if (response.status === 401) {
-                        setErrorMessage('Password is incorrect');
-                    } else if (response.status === 404) {
-                        setErrorMessage('We do not recognize your username');
-                    } else if (!response.status) {
-                        setErrorMessage('The server did not respond');
+                    } else {
+                        console.log(response);
+                        console.log(response.status);
                     }
+                    // } else if (response.status === 401) {
+                    //     setErrorMessage('Password is incorrect');
+                    // } else if (response.status === 404) {
+                    //     setErrorMessage('We do not recognize your username');
+                    // } else if (!response.status) {
+                    //     setErrorMessage('The server did not respond');
+                    // }
                 })
             } catch (error) {
                 console.log(error);
