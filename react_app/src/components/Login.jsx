@@ -46,34 +46,32 @@ export default function Login() {
         }
 
         const postAPI = () => {
-            try {
-                axios.post(loginURL, document.querySelector('#login-form'))
-                .then(function (response) {
-                    if (response.status === 200) {
-                        const userPayload = {
-                            'username': response.data.username,
-                            'password': response.data.userEmail,
-                            'userId': response.data.userId
-                        }
-                        dispatch(authenticationActions.login(userPayload));
-                        alert("Login successful!");
-                        navigate('/dashboard');
-                    } else {
-                        console.log(response);
-                        console.log(response.status);
+            axios.post(loginURL, document.querySelector('#login-form'))
+            .catch(function (error) {
+                const jsonError = error.toJSON();
+                if (jsonError.status === 404) {
+                    setErrorMessage('Your credentials are invalid');
+                } else if (jsonError.status === 401) {
+                    setErrorMessage('Your password is incorrect');
+                } else {
+                    setErrorMessage('The server did not respond');
+                }
+                return
+            })
+            .then(function (response) {
+                if (!response) {
+                    return
+                } else {
+                    const userPayload = {
+                        'username': response.data.username,
+                        'password': response.data.userEmail,
+                        'userId': response.data.userId
                     }
-                    // } else if (response.status === 401) {
-                    //     setErrorMessage('Password is incorrect');
-                    // } else if (response.status === 404) {
-                    //     setErrorMessage('We do not recognize your username');
-                    // } else if (!response.status) {
-                    //     setErrorMessage('The server did not respond');
-                    // }
-                })
-            } catch (error) {
-                console.log(error);
-                console.log(error.message);
-            }
+                    dispatch(authenticationActions.login(userPayload));
+                    alert("Login successful!");
+                    navigate('/dashboard');
+                }
+            });
         }
 
         postAPI();
@@ -83,11 +81,11 @@ export default function Login() {
     return (
         <div>
             <p className='nav-element'>Don't have an account? <Link to="/register" >Register</Link></p>
-            {errorMessage !== '' && (
-                <p>*{errorMessage}*</p>
-            )}
             <form onSubmit={handleSubmit} id="login-form">
                 <h2>Login</h2>
+                {errorMessage !== '' && (
+                    <p>*{errorMessage}*</p>
+                )}
                 <Input
                     label="Username: "
                     id="username"

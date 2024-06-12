@@ -48,7 +48,6 @@ export default function AddRecipe() {
     function handleSubmitRecipe(event) {
         event.preventDefault();
 
-
         if (recipeName === '') {
             setErrorMessage('Your recipe needs a name');
             return
@@ -63,9 +62,7 @@ export default function AddRecipe() {
             ingredients: recipeState.ingredients
         };
 
-
         const addRecipeAPI = () => {
-            console.log(recipeData);
             try {
                 axios({
                     method: 'POST',
