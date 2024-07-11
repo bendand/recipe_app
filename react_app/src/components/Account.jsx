@@ -49,7 +49,7 @@ export default function Account() {
             >
                 Are you sure you want to log out?
             </Modal>
-            <nav>
+            <nav className="main-nav">
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>

@@ -80,6 +80,10 @@ export default function Login() {
 
     return (
         <div>
+            <nav className='nav-bar'>
+                <Link to="/login" className='nav-element push'>Login</Link>
+                <Link to="/register" className='nav-element push'>Register</Link>
+            </nav>
             <p className='nav-element'>Don't have an account? <Link to="/register" >Register</Link></p>
             <form onSubmit={handleSubmit} id="login-form">
                 <h2>Login</h2>

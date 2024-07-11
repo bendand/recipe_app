@@ -1,3 +1,5 @@
+@import 'bulma/css/bulma.css';
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -18,10 +20,40 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.main-nav {
+  display: flex;
+  position: fixed;
+  top: 10px;
+  justify-content: left;
+}
+
+.main-nav Link:first-child {
+  margin-left: 0;
+}
+
+.push {
+  justify-content: end;
+}
 
 .nav-element {
-  display: inline-block;
   margin-left: 10px;
+}
+
+.authentication-nav {
+  justify-content: end;
+  float: right;
+  /* display: flex; */
+  position: fixed;
+  top: 10px;
+  margin-left: auto;
+}
+
+/* .authentication-nav:first-child {
+  margin-right: auto;
+} */
+
+.page-content {
+  padding: 10px;
 }
 
 
@@ -38,6 +70,17 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Update CSS variables */
+  }
+}
+
+[data-theme=dark],
+.theme-dark {
+  /* Update CSS variables */
 }
 
 .card {

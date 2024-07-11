@@ -43,7 +43,7 @@ export default function GenerateList() {
                     if (response.status === 204) {
                         alert(response.message);
                     } else if (response.status === 200) {
-                        const recipes = response.data;
+                        const recipes = response.data.recipes;
                         setUserRecipes(recipes);
                     }
                 })
@@ -93,8 +93,8 @@ export default function GenerateList() {
         
 
     return (
-        <>
-            <nav>
+        <div className='page-content'>
+            <nav className='main-nav'>
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
@@ -130,6 +130,6 @@ export default function GenerateList() {
                     ))}
                 </div>
             )}
-        </>
+        </div>
     );
 }

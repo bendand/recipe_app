@@ -5,8 +5,9 @@ import axios from "axios";
 const userRecipesURL = 'http://127.0.0.1:8000/users/myrecipes';
 
 export async function fetchUserRecipes() {
-
     const currentUser = useSelector(state => state.authentication.currentUser.payload);
+
+    let resData;
 
     try {
         const response = await fetch(userRecipesURL, {
@@ -21,9 +22,10 @@ export async function fetchUserRecipes() {
         if (!response.ok) {
             throw new Error('failed to fetch recipes');
         }
-        const resData = await response.json();
+        resData = await response.json();
     } catch (error) {
         console.log(error.message)
+        resData = error.status
     }
 
     return resData

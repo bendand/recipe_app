@@ -54,6 +54,7 @@ def login():
 
     # Grab the user from our User Models table
     user = User.query.filter_by(username=form_username).first()
+    print(user)
 
     if user and user.check_password(form_password):
         return jsonify(success=True, userEmail=user.email, username=user.username, userId=user.id), 200
@@ -88,31 +89,18 @@ def account():
 @user_views.route("/myrecipes", methods=['GET', 'POST'])
 def view_users_recipes():
 
-    print('view users recipes view hit')
+    user_id = int(request.args.get('userId', ''))
 
-    request_data = request.data
-    print(request_data)
+    user_recipes = Recipe.query.filter_by(user_id=user_id).order_by(Recipe.date.desc()).all()
 
-    # json_loads_data = json.loads(request_data)
-    # print('json request data: ' + json_loads_data)
-
-
-    user_Id = request.args.get('userId', '')
-    print('user id: ' + user_Id)
-
-    # user = User.query.filter_by(id=user_id).first_or_404()
-    # user_recipes = Recipe.query.filter_by(user_id=user_Id).order_by(Recipe.date.desc()).all()
+    if not user_recipes:
+        return jsonify(message='no recipes to display'), 204
     
-    # recipes_formatted = [recipe.to_json() for recipe in user_recipes]
+    recipes_formatted = [recipe.to_json() for recipe in user_recipes]
 
-    # if not user_recipes:
-    #     return jsonify(message='no recipes to display'), 204
-    # else:
-    #     return recipes_formatted, 200
+    return jsonify(recipes=recipes_formatted), 200
 
     
-
-
 
 @user_views.route("/myrecipes/generatelist", methods=['GET', 'POST'])
 def generate_shopping_list():

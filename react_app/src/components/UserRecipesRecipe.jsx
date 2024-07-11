@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import axios from "axios";
 import Modal from './Modal';
+import EditRecipeModal from './EditRecipeModal.jsx';
 
 const measurementValues = ['tablespoon', 'teaspoon', 'milligram', 'cup', 'ounce', 'pound',
                              'gallon', 'quart', 'pint', 'liter', 'milliliter', 'count', 'gram', 'kilogram']
@@ -28,8 +29,9 @@ export default function UserRecipesRecipe({ name, date, id }) {
     });
 
 
-    const dateFormatted = dateFormat(date, "dddd, mmmm dS, yyyy");
-    const modal = useRef();
+    // const dateFormatted = dateFormat(date, "mmmm yyyy");
+    const deleteModal = useRef();
+    const editRecipeModal = useRef();
     let recipeIdDeleting = null;
 
 
@@ -104,14 +106,18 @@ export default function UserRecipesRecipe({ name, date, id }) {
         return setInitialIngredients([]);
     }
 
-    function toggleIsEditing() {
-        if (isEditing) {
-            setIsEditing(false);
-            setIngredientsCopy(initialIngredients);
-            return
-        } else {
-            return setIsEditing(true);
-        }
+    // function toggleIsEditing() {
+    //     if (isEditing) {
+    //         setIsEditing(false);
+    //         setIngredientsCopy(initialIngredients);
+    //         return
+    //     } else {
+    //         return setIsEditing(true);
+    //     }
+    // }
+
+    function handleEditRecipe() {
+        modal.current.open();
     }
 
     function handleInputChange(identifier, value) {
@@ -136,13 +142,13 @@ export default function UserRecipesRecipe({ name, date, id }) {
 
     function handleStartDeleteRecipe(recipeId) {
         recipeIdDeleting = recipeId;
-        modal.current.open();
+        deleteModal.current.open();
         return
     }
 
     function handleCancelDeleteRecipe() {
         recipeIdDeleting = null;
-        modal.current.close();
+        deleteModal.current.close();
         return
     }
 
@@ -196,7 +202,7 @@ export default function UserRecipesRecipe({ name, date, id }) {
     return (
         <>
             <Modal 
-                ref={modal}
+                ref={deleteModal}
                 cancelButtonCaption="Cancel" 
                 proceedButtonCaption="Delete Recipe" 
                 onCancel={() => handleCancelDeleteRecipe()}
@@ -204,27 +210,33 @@ export default function UserRecipesRecipe({ name, date, id }) {
             >
                 Are you sure you want to delete this recipe?
             </Modal>
+            <EditRecipeModal
+                ingredients={initialIngredients}
+                recipeId={id}
+                recipeName={name}
+            />
             {initialIngredients.length === 0 && (
                 <div key={id}>
-                    <li key={id}>{name}, added {dateFormatted}</li>
-                    <button onClick={() => handleViewRecipeDetails(id)}>view recipe details</button>
-
+                    <elem key={id}>{name}
+                        <button onClick={() => handleViewRecipeDetails(id)}>view recipe details</button>
+                    </elem> 
                 </div>
             )}
             {initialIngredients.length !== 0 && !isEditing && (
                 <div key={id}>
-                    <span key={id}>{name}, added {dateFormatted}</span><button onClick={() => handleStartDeleteRecipe(id)}>delete recipe</button>
+                    <span key={id}>{name}</span><button onClick={() => hideRecipeDetails()}>hide recipe details</button>
                     {ingredientsCopy.map((ingredient) => (
                         <p key={ingredient[0]}>{ingredient[0]} {ingredient[1]} {ingredient[2]}</p>
                     ))}
-                    <button onClick={() => hideRecipeDetails()}>hide recipe details</button>
-                    <button onClick={() => toggleIsEditing()}>{!isEditing ? 'edit recipe' : 'cancel edit'}</button>
+                    <button onClick={() => handleStartDeleteRecipe(id)}>delete recipe</button>
+                    <button onClick={() => handleEditRecipe()}>{!isEditing ? 'edit recipe' : 'cancel edit'}</button>
                     {isEditing && <button onClick={() => handleSaveChanges(recipeId)}>Save Changes</button>}
                 </div>
             )}  
             {initialIngredients.length !== 0 && isEditing && (
                 <div>
-                    <span>{name}, added {dateFormatted}</span>
+                    <span>{name}</span>
+                    <button onClick={() => hideRecipeDetails()}>hide recipe details</button>
                     <button onClick={() => handleStartAddIngredient()}>{!isAddingIngredient ? 'add ingredient': 'cancel adding ingredient'}</button>
                     {errorMessage !== '' && <p>{errorMessage}</p>}
                     {isAddingIngredient && (

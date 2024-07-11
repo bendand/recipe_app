@@ -29,7 +29,7 @@ export default function AddRecipe() {
     const [errorMessage, setErrorMessage] = useState('');
     const [enteredIngredientValues, setEnteredIngredientValues] = useState({
         name: '',
-        quantity: undefined,
+        quantity: '',
         measurement: ''
     });
     const [recipeName, setRecipeName] = useState('');
@@ -70,7 +70,6 @@ export default function AddRecipe() {
                     data: recipeData
                 })
                 .then(function (response) {
-                    console.log(response);
                     if (response.status === 200) {
                         alert("Recipe added");
                         setRecipeState({
@@ -131,14 +130,16 @@ export default function AddRecipe() {
     }
 
     return (
-        <div>
-            <nav>
+        <>
+            <nav className="main-nav">
                 <Link to="/account" className='nav-element'>Account</Link>
                 <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
                 <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
                 <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
             </nav>
-            <p>Enter your recipe!</p>
+        <div className="page-content">
+            <div className="page-content"></div>
+            <h4>Enter your recipe!</h4>
             {errorMessage !== '' && (
                 <p>* {errorMessage}</p>
             )}
@@ -158,6 +159,7 @@ export default function AddRecipe() {
                     onChange={event => handleInputChange('name', event.target.value)}
                     value={enteredIngredientValues.name}
                 />
+                <br />
                 <input 
                     label="quantity"
                     name="quantity"
@@ -166,6 +168,7 @@ export default function AddRecipe() {
                     onChange={event => handleInputChange('quantity', event.target.value)}
                     value={enteredIngredientValues.quantity} 
                 />
+                <br />
                 <select 
                     label="measurement"
                     name="measurement"
@@ -197,5 +200,6 @@ export default function AddRecipe() {
             ))}
             </ul>
         </div>
+        </>
     )
 }

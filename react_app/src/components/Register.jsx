@@ -61,6 +61,10 @@ export default function Register() {
 
     return (
         <div>
+            <nav className='authentication-nav'>
+                <Link to="/login" className='nav-element push'>Login</Link>
+                <Link to="/register" className='nav-element push'>Register</Link>
+            </nav>
             <p>Already have an account? <Link to="/login">Login</Link></p>
             {errorMessage !== '' && (
                 <p>*{errorMessage}*</p>

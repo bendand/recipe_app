@@ -1,7 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useState, useEffect, useContext } from 'react'
+import { ToastContainer } from 'react-toastify';
 import './App.css'
+import 'react-toastify/dist/ReactToastify.css';
 
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
@@ -43,7 +45,10 @@ import AuthProvider from './context/AuthContext.jsx';
 function App() {
 
   return (
-    <RouterProvider router={router} /> 
+    <>
+      <RouterProvider router={router} /> 
+      <ToastContainer />
+    </>
   )
 
 }
