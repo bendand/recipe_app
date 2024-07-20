@@ -16,13 +16,15 @@ import { useEffect, useState } from "react";
 
 export default function UserRecipes() {
     const [userRecipes, setUserRecipes] = useState([]);
-    // const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
 
     const navigate = useNavigate();
     const currentUser = useSelector(state => state.authentication.currentUser.payload);
     const userRecipesURL = 'http://127.0.0.1:8000/users/myrecipes';
-    
+
+    function handleUpdateRecipeList(newRecipeList) {
+        setUserRecipes(newRecipeList);
+    }
 
     useEffect(() => {
         if (currentUser === undefined) {
@@ -76,6 +78,7 @@ export default function UserRecipes() {
                     date={recipe.date}
                     id={recipe.id}
                     key={recipe.id}
+                    updateRecipeList={handleUpdateRecipeList}
                 />
             ))} 
         </div>

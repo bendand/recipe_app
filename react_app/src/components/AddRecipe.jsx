@@ -14,7 +14,6 @@ const sortedMeasurements = measurementValues.sort()
 
 export default function AddRecipe() {
     const currentUser = useSelector(state => state.authentication.currentUser.payload);
-
     const navigate = useNavigate();
     
     if (currentUser === undefined) {
@@ -98,7 +97,7 @@ export default function AddRecipe() {
 
                 setErrorMessage('Please select a value for each ingredient input');
                 return
-            }
+        }
 
         setRecipeState((prevState) => {
             const newIngredient = {

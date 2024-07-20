@@ -12,69 +12,19 @@ const measurementValues = ['tablespoon', 'teaspoon', 'milligram', 'cup', 'ounce'
 const sortedMeasurements = measurementValues.sort()
 
 const getRecipeIngredientsURL = 'http://127.0.0.1:8000/recipes/viewrecipeingredients';
-const updateRecipeURL = 'http://127.0.0.1:8000/recipes/updaterecipe';
 const deleteRecipeURL = 'http://127.0.0.1:8000/recipes/deleterecipe';
 
-export default function UserRecipesRecipe({ name, date, id }) {
+export default function UserRecipesRecipe({ name, date, id, updateRecipeList }) {
     const [errorMessage, setErrorMessage] = useState('');
-    const [initialIngredients, setInitialIngredients] = useState([]);
-    const [ingredientsCopy, setIngredientsCopy] = useState([])
-    const [isEditing, setIsEditing] = useState(false);
-    const [hasEdited, setHasEdited] = useState(false);
-    const [isAddingIngredient, setIsAddingIngredient] = useState(false);
-    const [enteredIngredientValues, setEnteredIngredientValues] = useState({
-        name: '',
-        quantity: '',
-        measurement: ''
-    });
-
-
-    // const dateFormatted = dateFormat(date, "mmmm yyyy");
+    const [ingredients, setIngredients] = useState([]);
     const deleteModal = useRef();
     const editRecipeModal = useRef();
     let recipeIdDeleting = null;
 
-
-    function handleAddIngredient() {
-        try {
-            if (enteredIngredientValues.name === '' 
-            || enteredIngredientValues.quantity === '' 
-            || enteredIngredientValues.measurement === '') {
-                setErrorMessage('Please select a value for each ingredient input');
-                return
-            }
-
-            const newIngredient = [
-                enteredIngredientValues.name,
-                parseFloat(enteredIngredientValues.quantity),
-                enteredIngredientValues.measurement
-            ];
-
-            setErrorMessage('');
-
-            setIngredientsCopy( 
-                [
-                    newIngredient,
-                    ...ingredientsCopy
-                ]
-            );
-
-            setEnteredIngredientValues({
-                name: '',
-                quantity: '',
-                measurement: ''
-            });
-
-            setHasEdited(true);
-
-            return
-            
-        } catch (error) {
-            alert(error);
-        }
-
+    function handleCloseEditModal() {
+        editRecipeModal.current.close();
+        onUpdateRecipe();
     }
-    
 
     function handleViewRecipeDetails(recipeId) {
         const fetchRecipeIngredientsAPI = () => {
@@ -87,8 +37,8 @@ export default function UserRecipesRecipe({ name, date, id }) {
                 .then(function (response) {
                     if (response.status === 200) {
                         const ingredients = response.data;
-                        setInitialIngredients(ingredients);
-                        setIngredientsCopy(ingredients);
+                        // console.log(ingredients);
+                        setIngredients(ingredients);
                     }
                 })
             } catch (error) {
@@ -103,41 +53,15 @@ export default function UserRecipesRecipe({ name, date, id }) {
     }
 
     function hideRecipeDetails() {
-        return setInitialIngredients([]);
+        return setIngredients([]);
     }
-
-    // function toggleIsEditing() {
-    //     if (isEditing) {
-    //         setIsEditing(false);
-    //         setIngredientsCopy(initialIngredients);
-    //         return
-    //     } else {
-    //         return setIsEditing(true);
-    //     }
-    // }
 
     function handleEditRecipe() {
-        modal.current.open();
-    }
-
-    function handleInputChange(identifier, value) {
-        return setEnteredIngredientValues((prevValues) => ({
-            ...prevValues,
-            [identifier]: value,
-        }));
+        editRecipeModal.current.open();
     }
 
     function handleStartAddIngredient() {
         return setIsAddingIngredient((prevState) => !prevState);
-    }
-
-    function handleRemoveIngredient(ingredientName) {
-        setIngredientsCopy(
-            ingredientsCopy.filter(ingredient => ingredient[0] !== ingredientName)
-        );
-
-        setHasEdited(true);
-        return
     }
 
     function handleStartDeleteRecipe(recipeId) {
@@ -174,29 +98,7 @@ export default function UserRecipesRecipe({ name, date, id }) {
         return
     }
 
-    function handleSaveChanges(recipeId) {
-        const updateRecipeAPI = () => {
-            try {
-                axios.post(updateRecipeURL, {
-                    recipeId,
-                    ingredientsCopy
-                })
-                .then(function (response) {
-                    if (response.status === 200) {
-                        alert(response.data.message);
-                        setIsEditing(false);
-                    }
-                })
-            } catch (error) {
-                console.log(error);
-                alert('request failed');
-            }
-        }
-
-        updateRecipeAPI();
-
-        return
-    }
+    
         
 
     return (
@@ -211,80 +113,31 @@ export default function UserRecipesRecipe({ name, date, id }) {
                 Are you sure you want to delete this recipe?
             </Modal>
             <EditRecipeModal
-                ingredients={initialIngredients}
+                ref={editRecipeModal}
+                ingredients={ingredients}
                 recipeId={id}
                 recipeName={name}
+                cancelButtonCaption='Cancel'
+                proceedButtonCaption='Save Changes'
+                onCancel={() => handleCloseEditModal()}
+                onProceed={() => handleSaveChanges()}
+                updateRecipeList={updateRecipeList}
             />
-            {initialIngredients.length === 0 && (
+            {ingredients.length === 0 && (
                 <div key={id}>
                     <elem key={id}>{name}
-                        <button onClick={() => handleViewRecipeDetails(id)}>view recipe details</button>
+                        <button onClick={() => handleViewRecipeDetails(id)}>View Recipe Details</button>
                     </elem> 
                 </div>
             )}
-            {initialIngredients.length !== 0 && !isEditing && (
+            {ingredients.length !== 0 && (
                 <div key={id}>
-                    <span key={id}>{name}</span><button onClick={() => hideRecipeDetails()}>hide recipe details</button>
-                    {ingredientsCopy.map((ingredient) => (
-                        <p key={ingredient[0]}>{ingredient[0]} {ingredient[1]} {ingredient[2]}</p>
+                    <span key={id}>{name}</span><button onClick={() => hideRecipeDetails()}>Hide Recipe Details</button>
+                    {ingredients.map((ingredient) => (
+                        <p key={ingredient[0]}>{ingredient[0]}, {ingredient[1]} {ingredient[2]}</p>
                     ))}
-                    <button onClick={() => handleStartDeleteRecipe(id)}>delete recipe</button>
-                    <button onClick={() => handleEditRecipe()}>{!isEditing ? 'edit recipe' : 'cancel edit'}</button>
-                    {isEditing && <button onClick={() => handleSaveChanges(recipeId)}>Save Changes</button>}
-                </div>
-            )}  
-            {initialIngredients.length !== 0 && isEditing && (
-                <div>
-                    <span>{name}</span>
-                    <button onClick={() => hideRecipeDetails()}>hide recipe details</button>
-                    <button onClick={() => handleStartAddIngredient()}>{!isAddingIngredient ? 'add ingredient': 'cancel adding ingredient'}</button>
-                    {errorMessage !== '' && <p>{errorMessage}</p>}
-                    {isAddingIngredient && (
-                        <form>
-                            <label>Enter the ingredient's name, the quantity, and the measurement</label>
-                            <br />
-                            <input 
-                                label="name"
-                                type="name"
-                                name="name"
-                                id="name"
-                                onChange={(event) => handleInputChange('name', event.target.value)}
-                                value={enteredIngredientValues.name}
-                            />
-                            <input 
-                                label="quantity"
-                                name="quantity"
-                                id="quantity" 
-                                type="number"
-                                onChange={(event) => handleInputChange('quantity', event.target.value)}
-                                value={enteredIngredientValues.quantity} 
-                            />
-                            <select 
-                                label="measurement"
-                                name="measurement"
-                                id="measurement"
-                                onChange={(event) => handleInputChange('measurement', event.target.value)}
-                                value={enteredIngredientValues.measurement}
-                            >
-                                <option defaultValue="" disabled hidden></option>
-                                {sortedMeasurements.map((measurement) => (
-                                    <option key={measurement} id={measurement}>{measurement}</option>
-                                ))}
-                            </select>
-                            <button type="button" onClick={() => handleAddIngredient()}>add ingredient</button>
-                        </form>
-                    )}
-                    <ul>
-                    {ingredientsCopy.map((ingredient) => (
-                        <li key={ingredient[0]}>
-                            <span >{ingredient[0]} {ingredient[1]} {ingredient[2]}</span>
-                            <button onClick={() => handleRemoveIngredient(ingredient[0])}>remove</button>
-                        </li>
-                    ))}
-                    </ul>
-                    <button onClick={() => hideRecipeDetails()}>hide recipe details</button>
-                    <button onClick={() => toggleIsEditing()}>{!isEditing ? 'edit recipe' : 'cancel edit'}</button>
-                    {hasEdited && <button onClick={() => handleSaveChanges(id)}>Save Changes</button>}
+                    <button onClick={() => handleStartDeleteRecipe(id)}>Delete Recipe</button>
+                    <button onClick={() => handleEditRecipe()}>Edit Recipe</button>
                 </div>
             )}
         </>
