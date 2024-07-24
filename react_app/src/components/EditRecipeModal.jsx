@@ -17,7 +17,7 @@ const EditRecipeModal = forwardRef(function Modal({
     recipeName, 
     onProceed,
     onCancel,
-    updateRecipeList,
+    updateIngredientList,
     cancelButtonCaption,
     proceedButtonCaption
  }, ref) {
@@ -36,8 +36,6 @@ const EditRecipeModal = forwardRef(function Modal({
     useEffect(() => {
         setIngredientsCopy(ingredients);
     }, [ingredients]);
-
-    console.log(ingredientsCopy);
 
 
     useImperativeHandle(ref, () => {
@@ -69,8 +67,6 @@ const EditRecipeModal = forwardRef(function Modal({
         const ingredientsNoOldIngredient = ingredientsCopy.filter(ingredient => ingredient[0] !== ingredientName);
         const newIngredient = [updatedValues.name, parseFloat(updatedValues.quantity), updatedValues.measurement];
         const ingredientsUpdated = [newIngredient, ...ingredientsNoOldIngredient]
-
-        console.log(ingredientsUpdated);
 
         setHasEdited(true);
         setIngredientsCopy(ingredientsUpdated);
@@ -150,7 +146,6 @@ const EditRecipeModal = forwardRef(function Modal({
     }
 
     function handleSaveChanges() {
-        console.log(recipeId);
         const updateRecipeAPI = () => {
             try {
                 axios.post(updateRecipeURL, {
@@ -159,17 +154,15 @@ const EditRecipeModal = forwardRef(function Modal({
                 })
                 .then(function (response) {
                     if (response.status === 200) {
-                        alert(response.data.message);
                     }
                 })
             } catch (error) {
-                console.log(error);
                 alert('request failed');
             }
         }
 
         updateRecipeAPI();
-        updateRecipeList(ingredientsCopy);
+        updateIngredientList(ingredientsCopy);
     }
 
     return createPortal(
@@ -190,10 +183,8 @@ const EditRecipeModal = forwardRef(function Modal({
                 />
             ))}
             </ul>
-            {!isAddingIngredient ? (
+            {!isAddingIngredient && (
                 <button onClick={handleStartAddIngredient}>Add Ingredient</button>
-            ) : (
-                <button onClick={handleCancelAddIngredient}>Cancel Adding Ingredient</button>
             )}
             {isAddingIngredient && (
                 <form>
@@ -201,7 +192,7 @@ const EditRecipeModal = forwardRef(function Modal({
                     {errorMessage !== '' && (
                         <p>{errorMessage}</p>
                     )}
-                    <label>Ingredient Name:</label>
+                    <label>Name:</label>
                     <input 
                         label="name"
                         type="name"
@@ -219,6 +210,7 @@ const EditRecipeModal = forwardRef(function Modal({
                         onChange={(event) => handleInputChange('quantity', event.target.value)}
                         value={enteredIngredientValues.quantity} 
                     />
+                    <br />
                     <label>Measurement:</label>
                     <select 
                         label="measurement"
@@ -232,6 +224,7 @@ const EditRecipeModal = forwardRef(function Modal({
                             <option key={measurement} id={measurement}>{measurement}</option>
                         ))}
                     </select>
+                    <button type="button" onClick={handleCancelAddIngredient}>Cancel</button>
                     <button type="button" onClick={() => handleAddIngredient()}>Add</button>
                 </form>
             )}

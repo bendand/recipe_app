@@ -1,5 +1,6 @@
 import dateFormat from 'dateformat';
 import { useState, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ const sortedMeasurements = measurementValues.sort()
 const getRecipeIngredientsURL = 'http://127.0.0.1:8000/recipes/viewrecipeingredients';
 const deleteRecipeURL = 'http://127.0.0.1:8000/recipes/deleterecipe';
 
-export default function UserRecipesRecipe({ name, date, id, updateRecipeList }) {
+export default function UserRecipesRecipe({ name, date, id }) {
     const [errorMessage, setErrorMessage] = useState('');
     const [ingredients, setIngredients] = useState([]);
     const deleteModal = useRef();
@@ -23,7 +24,11 @@ export default function UserRecipesRecipe({ name, date, id, updateRecipeList }) 
 
     function handleCloseEditModal() {
         editRecipeModal.current.close();
-        onUpdateRecipe();
+    }
+
+    function handleUpdateIngredientList(newIngredientList) {
+        setIngredients(newIngredientList);
+        toast.success('Recipe updated!');        
     }
 
     function handleViewRecipeDetails(recipeId) {
@@ -121,7 +126,7 @@ export default function UserRecipesRecipe({ name, date, id, updateRecipeList }) 
                 proceedButtonCaption='Save Changes'
                 onCancel={() => handleCloseEditModal()}
                 onProceed={() => handleSaveChanges()}
-                updateRecipeList={updateRecipeList}
+                updateIngredientList={handleUpdateIngredientList}
             />
             {ingredients.length === 0 && (
                 <div key={id}>

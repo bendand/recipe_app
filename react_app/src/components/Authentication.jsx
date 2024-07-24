@@ -22,14 +22,13 @@ export default function Authentication() {
     }
 
     function changeAuthenticatingStatus(newStatus) {
-        console.log(newStatus);
         setAuthenticatingStatus(newStatus);
         modal.current.open();
     }
 
     function cancelAuthenticate() {
-        setAuthenticatingStatus('');
         modal.current.close();
+        setAuthenticatingStatus('');
     }
 
     return (
@@ -37,8 +36,8 @@ export default function Authentication() {
             <AuthenticationModal 
                 ref={modal}
                 authStatus={authenticatingStatus}
-                changeAuthStatus={() => changeAuthenticatingStatus(newStatus)}
-                onCancel={() => cancelAuthenticate()}
+                setAuthenticatingStatus={changeAuthenticatingStatus}
+                onCancel={cancelAuthenticate}
             />
             <nav className='authentication-nav'>
                 <Link onClick={handleStartLogin} className='nav-element'>Login</Link>

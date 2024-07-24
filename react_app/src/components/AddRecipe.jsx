@@ -146,10 +146,11 @@ export default function AddRecipe() {
                 <label>Recipe name:</label>
                 <input type="text" value={recipeName} onChange={handleRecipeNameChange} ></input>
                 <br />
-                <label>
+                {/* <label>
                     Enter the ingredient's name, the quantity, and the measurement
-                </label>
+                </label> */}
                 <br />
+                <label>Ingredient name:</label>
                 <input 
                     label="name"
                     type="text"
@@ -159,6 +160,7 @@ export default function AddRecipe() {
                     value={enteredIngredientValues.name}
                 />
                 <br />
+                <label>Quantity:</label>
                 <input 
                     label="quantity"
                     name="quantity"
@@ -168,6 +170,7 @@ export default function AddRecipe() {
                     value={enteredIngredientValues.quantity} 
                 />
                 <br />
+                <label>Measurement:</label>
                 <select 
                     label="measurement"
                     name="measurement"

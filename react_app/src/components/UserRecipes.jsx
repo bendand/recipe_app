@@ -22,10 +22,6 @@ export default function UserRecipes() {
     const currentUser = useSelector(state => state.authentication.currentUser.payload);
     const userRecipesURL = 'http://127.0.0.1:8000/users/myrecipes';
 
-    function handleUpdateRecipeList(newRecipeList) {
-        setUserRecipes(newRecipeList);
-    }
-
     useEffect(() => {
         if (currentUser === undefined) {
             alert('your session has expired, you are being redirected to the homepage');
@@ -78,7 +74,6 @@ export default function UserRecipes() {
                     date={recipe.date}
                     id={recipe.id}
                     key={recipe.id}
-                    updateRecipeList={handleUpdateRecipeList}
                 />
             ))} 
         </div>

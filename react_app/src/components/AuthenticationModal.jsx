@@ -18,10 +18,10 @@ const loginURL = 'http://127.0.0.1:8000/users/login';
 const AuthenticationModal = forwardRef(function AuthenticationModal({ 
     authStatus,
     proceedButtonCaption, 
-    onCancel, 
-    onSubmitLogin }, 
+    setAuthenticatingStatus,
+    onCancel }, 
     ref) {
-    const [authenticatingStatus, setAuthenticatingStatus] = useState(authStatus);
+    // const [authenticatingStatus, setAuthenticatingStatus] = useState(authStatus);
     const [passwordsAreNotEqual, setPasswordsAreNotEqual] = useState(false);
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
@@ -70,6 +70,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
     });
 
     function changeAuthStatus(newStatus) {
+        console.log(newStatus);
         setAuthenticatingStatus(newStatus);
     } 
 
@@ -160,7 +161,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
             ref={dialog}
             className="backdrop:bg-stone-900/90 p-4 rounded-md shadow-md"
         >
-        {authenticatingStatus === 'register' ? (
+        {authStatus === 'register' ? (
             <div>
                 <p>Already have an account? <button onClick={() => changeAuthStatus('login')}>Log in</button></p>
                 <form id="register-form" onSubmit={handleRegister}>
@@ -208,7 +209,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
                     <div>
                         {passwordsAreNotEqual && <p>Passwords must match</p>}
                     </div>
-                    <p>
+                    <p className='form-actions'>
                         <button className="button" onClick={onCancel}>Cancel</button>
                         <button type="submit">Sign Up</button>
                     </p>
@@ -245,7 +246,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
                     />
                     <p className="form-actions">
                         <button className="button" onClick={onCancel}>Cancel</button>
-                        <button className="button">Login</button>
+                        <button type="submit">Login</button>
                     </p>
                 </form>
             </div>
