@@ -77,11 +77,16 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
     function handleLogin(event) {
         event.preventDefault();
 
-        console.log('handle login function hit');
+        if (usernameValue === '' || passwordValue === '') {
+            console.log('one or more values are empty');
+            return
+        }
         
         if (usernameHasError || passwordHasError) {
+            console.log('there are errors here');
             return;
         }
+
 
         const postAPI = () => {
             console.log('post API hit');
@@ -136,8 +141,8 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
                 axios.post(registerURL, document.querySelector('#register-form'))
                 .then(function (response) {
                     if (response.status === 200) {
-                        alert("Registration successful!");
-                        registrationHandler();
+                        navigate('/dashboard');
+                        toast.success('Registration successful!');
                     }
                 })
             } catch (error) {
@@ -159,7 +164,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
     return createPortal(
         <dialog
             ref={dialog}
-            className="backdrop:bg-stone-900/90 p-4 rounded-md shadow-md"
+            // className="backdrop:bg-stone-900/90 p-4 rounded-md shadow-md"
         >
         {authStatus === 'register' ? (
             <div>
@@ -219,8 +224,8 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
         ) : (
             <div>
                 <p>Don't have an account? <button onClick={() => changeAuthStatus('register')}>Sign up</button></p>
-                <form id="login-form" onSubmit={handleLogin}>
-                    <h2>Login</h2>
+                <form id="login-form">
+                    <h3>Login</h3>
                     {errorMessage !== '' && (
                         <p>*{errorMessage}*</p>
                     )}
@@ -245,8 +250,8 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
                         error={passwordHasError && 'Passwords must be at least 6 characters'}
                     />
                     <p className="form-actions">
-                        <button className="button" onClick={onCancel}>Cancel</button>
-                        <button type="submit">Login</button>
+                        <button onClick={onCancel}>Cancel</button>
+                        <button onClick={handleLogin}>Login</button>
                     </p>
                 </form>
             </div>

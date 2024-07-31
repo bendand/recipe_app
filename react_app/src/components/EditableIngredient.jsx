@@ -37,7 +37,7 @@ export default function EditableIngredient({
 
         onSaveIngredient(ingredient, updatedValues);
         setIsEditing(false);
-        
+
         return
     }
 
@@ -71,6 +71,7 @@ export default function EditableIngredient({
                         id="name"
                         onChange={(event) => handleInputChange('name', event.target.value)}
                         value={enteredIngredientValues.name}
+                        style={{ width: "120px" }}
                     />
                     <input 
                         label="quantity"
@@ -80,6 +81,7 @@ export default function EditableIngredient({
                         type="number"
                         onChange={(event) => handleInputChange('quantity', event.target.value)}
                         value={enteredIngredientValues.quantity} 
+                        style={{ width: "60px" }}
                     />
                     <select 
                         label="measurement"

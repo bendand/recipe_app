@@ -48,6 +48,10 @@
   margin-left: auto;
 }
 
+/* .auth-modal {
+  outline: 5px ridge rgba(170, 50, 220, .6);
+  border-radius: 2rem;
+} */
 /* .authentication-nav:first-child {
   margin-right: auto;
 } */

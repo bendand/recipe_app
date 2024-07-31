@@ -1,6 +1,6 @@
 export default function Input({ label, error, id, ...props }) {
     return (
-        <div>
+        <div style={{ margin: '5px' }}>
             <label htmlFor={id}>{label}</label>
             <input id={id} {...props} />
             <div>

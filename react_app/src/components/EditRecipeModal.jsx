@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 're
 import { createPortal } from 'react-dom';
 import axios from 'axios';
 import EditableIngredient from './EditableIngredient';
+import { toast } from 'react-toastify';
 
 import { Link, useNavigate, Outlet } from "react-router-dom";
 
@@ -154,6 +155,8 @@ const EditRecipeModal = forwardRef(function Modal({
                 })
                 .then(function (response) {
                     if (response.status === 200) {
+                        navigate('/myrecipes');
+                        toast.success('Recipe updated!');
                     }
                 })
             } catch (error) {
@@ -200,7 +203,9 @@ const EditRecipeModal = forwardRef(function Modal({
                         id="name"
                         onChange={(event) => handleInputChange('name', event.target.value)}
                         value={enteredIngredientValues.name}
+                        style={{ width: "120px" }}
                     />
+                    <br />
                     <label>Quantity:</label>
                     <input 
                         label="quantity"
@@ -209,6 +214,7 @@ const EditRecipeModal = forwardRef(function Modal({
                         type="number"
                         onChange={(event) => handleInputChange('quantity', event.target.value)}
                         value={enteredIngredientValues.quantity} 
+                        style={{ width: "60px" }}
                     />
                     <br />
                     <label>Measurement:</label>

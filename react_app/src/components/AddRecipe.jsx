@@ -146,10 +146,6 @@ export default function AddRecipe() {
                 <label>Recipe name:</label>
                 <input type="text" value={recipeName} onChange={handleRecipeNameChange} ></input>
                 <br />
-                {/* <label>
-                    Enter the ingredient's name, the quantity, and the measurement
-                </label> */}
-                <br />
                 <label>Ingredient name:</label>
                 <input 
                     label="name"

@@ -43,7 +43,7 @@ export default function Authentication() {
                 <Link onClick={handleStartLogin} className='nav-element'>Login</Link>
                 <Link onClick={handleStartRegister} className='nav-element'>Register</Link>
             </nav>
-            <div class="theme-dark">
+            <div className="theme-dark">
                 <h1><strong>The Shopping List</strong></h1>
                 <p>The Shopping List turns your cluttered recipes into one condensed shopping list.</p>
             </div>
