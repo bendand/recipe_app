@@ -38,8 +38,8 @@ export default function Login() {
     const dispatch = useDispatch();
 
 
-    function handleSubmit(event) {
-        event.preventDefault();
+    function handleSubmit() {
+        // event.preventDefault();
         
         if (usernameHasError || passwordHasError) {
             return;
@@ -80,7 +80,7 @@ export default function Login() {
 
     return (
         <div>
-            <nav className='nav-bar'>
+            <nav>
                 <Link to="/login" className='nav-element push'>Login</Link>
                 <Link to="/register" className='nav-element push'>Register</Link>
             </nav>
@@ -112,7 +112,7 @@ export default function Login() {
                 />
                 <p className="form-actions">
                     <button className="button button-flat">Reset</button>
-                    <button className="button">Login</button>
+                    <button className="button" type="submit">Login</button>
                 </p>
             </form>
         </div>

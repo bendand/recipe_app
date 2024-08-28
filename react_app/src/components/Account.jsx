@@ -46,19 +46,25 @@ export default function Account() {
                 cancelButtonCaption="Cancel"
                 onCancel={handleCancelLogOut}
                 onProceed={handleLogOut}
+                isDanger="True"
             >
                 Are you sure you want to log out?
             </Modal>
-            <nav className="main-nav">
-                <Link to="/account" className='nav-element'>Account</Link>
-                <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
-                <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
-                <Outlet />
-                <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
+            <nav class="navbar is-fixed-top">
+                <Link to="/dashboard" class='navbar-item'>The Shopping List</Link>
+                <Link to="/account" class='navbar-item'>Account</Link>
+                <Link to="/addrecipe" class='navbar-item'>Add a Recipe</Link>
+                <Link to="/myrecipes" class='navbar-item'>My Recipes</Link>
+                <Link to="/generatelist" class='navbar-item'>Generate Shopping List</Link>
             </nav>
             <div>
                 <p><strong>{username}'s account</strong></p>
-                <button onClick={() => handleStartLogout()}>Log Out</button>
+                <button class="button" onClick={() => handleStartLogout()}>Log Out</button>
+            </div>
+            <br></br>
+            <br></br>
+            <div>
+                <button class="button">Turn on dark mode</button>
             </div>
         </>
     );

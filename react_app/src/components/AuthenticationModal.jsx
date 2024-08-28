@@ -27,6 +27,8 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
     const [errorMessage, setErrorMessage] = useState('');
     const dispatch = useDispatch();
     const dialog = useRef();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     const {value: emailValue, 
         handleInputChange: handleEmailChange, 
@@ -89,7 +91,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
 
 
         const postAPI = () => {
-            console.log('post API hit');
+            setIsSubmitting(true);
             axios.post(loginURL, document.querySelector('#login-form'))
             .then(function (response) {
                 console.log('positive response registered');
@@ -137,6 +139,7 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
         }
 
         const postAPI = () => {
+            setIsSubmitting(true);
             try {
                 axios.post(registerURL, document.querySelector('#register-form'))
                 .then(function (response) {
@@ -167,7 +170,15 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
             // className="backdrop:bg-stone-900/90 p-4 rounded-md shadow-md"
         >
         {authStatus === 'register' ? (
-            <div>
+            <div class="modal-content">
+                <button 
+                    class="modal-close is-large has-background-black" 
+                    aria-label="close has-text black"
+
+                    onClick={onCancel}
+                />
+                <br />
+                <br />
                 <p>Already have an account? <button onClick={() => changeAuthStatus('login')}>Log in</button></p>
                 <form id="register-form" onSubmit={handleRegister}>
                     <p>Create Account</p>
@@ -215,14 +226,25 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
                         {passwordsAreNotEqual && <p>Passwords must match</p>}
                     </div>
                     <p className='form-actions'>
-                        <button className="button" onClick={onCancel}>Cancel</button>
-                        <button type="submit">Sign Up</button>
+                        <button class="button" onClick={onCancel}>Cancel</button>
+                        <button class={`button is-primary ${isSubmitting === true && 'is-loading'}`} 
+                            onClick={handleLogin}
+                            >
+                                Register
+                        </button>
                     </p>
                 </form>
             </div>
 
         ) : (
-            <div>
+            <div class="modal-content">
+                <button 
+                    class="modal-close is-large has-background-black" 
+                    aria-label="close"
+                    onClick={onCancel}
+                />
+                <br />
+                <br />
                 <p>Don't have an account? <button onClick={() => changeAuthStatus('register')}>Sign up</button></p>
                 <form id="login-form">
                     <h3>Login</h3>
@@ -250,8 +272,12 @@ const AuthenticationModal = forwardRef(function AuthenticationModal({
                         error={passwordHasError && 'Passwords must be at least 6 characters'}
                     />
                     <p className="form-actions">
-                        <button onClick={onCancel}>Cancel</button>
-                        <button onClick={handleLogin}>Login</button>
+                        <button class="button"onClick={onCancel}>Cancel</button>
+                        <button class={`button is-primary ${isSubmitting === true && 'is-loading'}`} 
+                            onClick={handleLogin}
+                            >
+                                Login
+                        </button>
                     </p>
                 </form>
             </div>

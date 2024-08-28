@@ -65,14 +65,16 @@ export default function GenerateListRecipe({ id, name, date }) {
                 <div key={id}>
                     <li key={id}>{name}, added {dateFormatted}</li>
                     <button onClick={(event) => handleViewRecipeDetails(id, event)}>view recipe details</button>
-                    <input 
-                        type="checkbox" 
-                        id={id}
-                        name={id} 
-                        onClick={() => toggleCheckboxClick(id)}
-                        value={checked}
-                    />
-                    <label>add recipe</label>
+                    <label class="checkbox">
+                        <input 
+                            type="checkbox" 
+                            id={id}
+                            name={id} 
+                            onClick={() => toggleCheckboxClick(id)}
+                            value={checked}
+                        />
+                         Add Recipe
+                    </label>
                 </div>
             )}
             {ingredients.length !== 0 && (
@@ -82,14 +84,16 @@ export default function GenerateListRecipe({ id, name, date }) {
                         <p key={ingredient[0]}>{ingredient[0]} {ingredient[1]} {ingredient[2]}</p>
                     ))}
                     <button onClick={() => hideRecipeDetails(id)}>hide recipe details</button>
-                    <input 
-                        type="checkbox" 
-                        id={id}
-                        name={id} 
-                        onClick={() => toggleCheckboxClick(id)}
-                        value={checked}
-                    />
-                    <label>add recipe</label>
+                    <label class="checkbox">
+                        <input 
+                            type="checkbox" 
+                            id={id}
+                            name={id} 
+                            onClick={() => toggleCheckboxClick(id)}
+                            value={checked}
+                        />
+                         Add Recipe
+                    </label>
                 </div>
             )}
         </>

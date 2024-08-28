@@ -3,15 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React</title>
-    <div id="main-nav"></div>
-    <div id="authentication-nav"></div>
   </head>
   <body>
-    <div id="modal-root"></div>
-    <div id="root"></div>
+    <section>
+      <div id="nav-root"></div>
+    </section>
+    <section>
+      <div id="modal-root"></div>
+    </section>
+    <section class="container is-medium">
+      <div id="root"></div>
+    </section>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

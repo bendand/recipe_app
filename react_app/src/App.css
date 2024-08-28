@@ -1,10 +1,13 @@
 @import 'bulma/css/bulma.css';
 
 #root {
+  top: 10px;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .logo {
@@ -20,9 +23,32 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.authentication-div {
+  background-color: aqua;
+}
+
+.dashboard-hero {
+  align-content: left;
+  padding: 0;
+  justify-items: left;
+}
+
+.add-recipe-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.add-recipe-form, .add-recipe-ingredients {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  
+}
+
 .main-nav {
   display: flex;
-  position: fixed;
+  position: absolute;
   top: 10px;
   justify-content: left;
 }
@@ -36,13 +62,14 @@
 }
 
 .nav-element {
-  margin-left: 10px;
+  /* margin-left: 10px; */
+  padding: 15px;
 }
 
 .authentication-nav {
   justify-content: end;
   float: right;
-  /* display: flex; */
+  display: flex;
   position: fixed;
   top: 10px;
   margin-left: auto;
@@ -56,9 +83,14 @@
   margin-right: auto;
 } */
 
-.page-content {
-  padding: 10px;
+.main-content-body {
+  justify-content: center;
+
 }
+
+/* .add-recipe-form {
+  
+} */
 
 
 @keyframes logo-spin {

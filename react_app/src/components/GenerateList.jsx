@@ -93,43 +93,49 @@ export default function GenerateList() {
         
 
     return (
-        <div className='page-content'>
-            <nav className='main-nav'>
-                <Link to="/account" className='nav-element'>Account</Link>
-                <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
-                <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
-                <Outlet />
-                <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
-            </nav>
-            {shoppingListIngredients === null ? (
-                <div>
-                    <h4>choose recipes to add to your shopping list</h4>
-                    {errorMessage !== '' && (
-                        <p>*{errorMessage}</p>
-                    )}
-                    <form id='recipe-list' name='recipe-list'>
-                        <ul>
-                            {userRecipes.map((recipe) => (
-                                <div key={recipe.id}>
-                                    <GenerateListRecipe
-                                        id={recipe.id}
-                                        name={recipe.name}
-                                        date={recipe.date}
-                                        />
-                                </div>
-                            ))}
-                        </ul>
-                        <button onClick={handleSubmitRecipes}>make my shopping list!</button>
-                    </form>
-                </div>
-            ) : (
-                <div>
-                    <h4>my shopping list</h4>
-                    {shoppingListIngredients.map((ingredient) => (
-                        <li key={[ingredient[0], ingredient[2]]}>{ingredient[0]} {ingredient[1]} {ingredient[2]}</li>
-                    ))}
-                </div>
-            )}
-        </div>
+        <>
+            <header>
+                <nav class='navbar is-fixed-top'>
+                    <Link to="/dashboard" class='navbar-item'>The Shopping List</Link>
+                    <Link to="/account" className='navbar-item'>Account</Link>
+                    <Link to="/addrecipe" className='navbar-item'>Add a Recipe</Link>
+                    <Link to="/myrecipes" className='navbar-item'>My Recipes</Link>
+                    <Outlet />
+                    <Link to="/generatelist" className='navbar-item'>Generate Shopping List</Link>
+                </nav>
+            </header>
+            <div>
+                {shoppingListIngredients === null ? (
+                    <div>
+                        <h2><strong>Choose recipes to add to your shopping list!</strong></h2>
+                        <br />
+                        {errorMessage !== '' && (
+                            <p>*{errorMessage}</p>
+                        )}
+                        <form id='generate-recipe-list'>
+                            <ul>
+                                {userRecipes.map((recipe) => (
+                                    <div key={recipe.id}>
+                                        <GenerateListRecipe
+                                            id={recipe.id}
+                                            name={recipe.name}
+                                            date={recipe.date}
+                                            />
+                                    </div>
+                                ))}
+                            </ul>
+                            <button onClick={handleSubmitRecipes}>Make my shopping list!</button>
+                        </form>
+                    </div>
+                ) : (
+                    <div>
+                        <h3><strong>My shopping list:</strong></h3>
+                        {shoppingListIngredients.map((ingredient) => (
+                            <li key={[ingredient[0], ingredient[2]]}>{ingredient[0]} {ingredient[1]} {ingredient[2]}</li>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 }

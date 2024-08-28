@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { Formik } from 'formik';
+import { Helmet } from 'react-helmet';
 
 import AuthenticationModal from './AuthenticationModal';
 
@@ -31,23 +32,28 @@ export default function Authentication() {
         setAuthenticatingStatus('');
     }
 
+    // id="authentication-div"
+
     return (
-        <div>
+        <section>
+            <header>
+                <nav class="navbar is-fixed-top">
+                    <Link class='navbar-item disabled'>The Shopping List</Link>
+                    <Link onClick={handleStartLogin} class='navbar-item'>Login</Link>
+                    <Link onClick={handleStartRegister} class='navbar-item'>Register</Link>
+                </nav>
+            </header>
+            <div class="container is-max-desktop">
+                <h1><strong>The Shopping List</strong></h1>
+                <p>The Shopping List turns your cluttered recipes into one condensed shopping list.</p>
+            </div>
             <AuthenticationModal 
                 ref={modal}
                 authStatus={authenticatingStatus}
                 setAuthenticatingStatus={changeAuthenticatingStatus}
                 onCancel={cancelAuthenticate}
             />
-            <nav className='authentication-nav'>
-                <Link onClick={handleStartLogin} className='nav-element'>Login</Link>
-                <Link onClick={handleStartRegister} className='nav-element'>Register</Link>
-            </nav>
-            <div className="theme-dark">
-                <h1><strong>The Shopping List</strong></h1>
-                <p>The Shopping List turns your cluttered recipes into one condensed shopping list.</p>
-            </div>
-        </div>
+        </section>
     )
     
 }

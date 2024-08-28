@@ -130,74 +130,94 @@ export default function AddRecipe() {
 
     return (
         <>
-            <nav className="main-nav">
-                <Link to="/account" className='nav-element'>Account</Link>
-                <Link to="/addrecipe" className='nav-element'>Add a Recipe</Link>
-                <Link to="/myrecipes" className='nav-element'>My Recipes</Link>
-                <Link to="/generatelist" className='nav-element'>Generate Shopping List</Link>
-            </nav>
-        <div className="page-content">
-            <div className="page-content"></div>
-            <h4>Enter your recipe!</h4>
+            <header>
+                <nav class="navbar is-fixed-top">
+                    <Link to="/dashboard" class='navbar-item'>The Shopping List</Link>
+                    <Link to="/account" className='navbar-item'>Account</Link>
+                    <Link to="/addrecipe" className='navbar-item'>Add a Recipe</Link>
+                    <Link to="/myrecipes" className='navbar-item'>My Recipes</Link>
+                    <Link to="/generatelist" className='navbar-item'>Generate Shopping List</Link>
+                </nav>
+            </header>
+            <h2><em>Enter your recipe!</em></h2>
             {errorMessage !== '' && (
                 <p>* {errorMessage}</p>
             )}
-            <form>
-                <label>Recipe name:</label>
-                <input type="text" value={recipeName} onChange={handleRecipeNameChange} ></input>
-                <br />
-                <label>Ingredient name:</label>
-                <input 
-                    label="name"
-                    type="text"
-                    name="name"
-                    id="name"
-                    onChange={event => handleInputChange('name', event.target.value)}
-                    value={enteredIngredientValues.name}
-                />
-                <br />
-                <label>Quantity:</label>
-                <input 
-                    label="quantity"
-                    name="quantity"
-                    id="quantity" 
-                    type="number"
-                    onChange={event => handleInputChange('quantity', event.target.value)}
-                    value={enteredIngredientValues.quantity} 
-                />
-                <br />
-                <label>Measurement:</label>
-                <select 
-                    label="measurement"
-                    name="measurement"
-                    type="text"
-                    id="measurement"
-                    onChange={event => handleInputChange('measurement', event.target.value)}
-                    value={enteredIngredientValues.measurement}
-                >
-                    <option disabled hidden></option>
-                    {sortedMeasurements.map((measurement) => (
-                        <option key={measurement} id={measurement}>{measurement}</option>
-                    ))}
-                </select>
-                <button onClick={handleAddIngredient}>Add Ingredient</button>
-                <br />
-                <button onClick={handleSubmitRecipe}>Add Recipe</button>
-            </form>
-            <ul className="p-4 mt-8 rounded-md bg-stone-100">
-            {recipeState.ingredients.map((ingredient) => (
-                <li key={ingredient.name} >
-                    <span>{ingredient.name} - {ingredient.quantity} {ingredient.measurement}    </span>
-                    <button
-                        onClick={() => handleDeleteIngredient(ingredient.name)}
-                    >
-                        Delete 
-                    </button>
-                    <br />
-                </li>
-            ))}
-            </ul>
-        </div>
+            <div id="add-recipe-container" class="level">
+                <div id="add-recipe-form" class="level-left">
+                    <form>
+                        <div class="field">
+                            <label class="label">Recipe Name</label>
+                            <div class="control">
+                                <input 
+                                    class="input" 
+                                    type="text" 
+                                    placeholder="Recipe Name"
+                                    value={recipeName}
+                                    onChange={handleRecipeNameChange}/>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Ingredient Name</label>
+                            <div class="control">
+                                <input 
+                                    class="input" 
+                                    type="text" 
+                                    placeholder="Name"
+                                    onChange={event => handleInputChange('name', event.target.value)}
+                                    value={enteredIngredientValues.name}/>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Quantity</label>
+                            <div class="control">
+                                <input 
+                                    class="input" 
+                                    type="number" 
+                                    placeholder="Quantity"
+                                    onChange={event => handleInputChange('quantity', event.target.value)}
+                                    value={enteredIngredientValues.quantity} />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Quantity</label>
+                            <div class="control">
+                                <select 
+                                    label="measurement"
+                                    name="measurement"
+                                    type="text"
+                                    id="measurement"
+                                    onChange={event => handleInputChange('measurement', event.target.value)}
+                                    value={enteredIngredientValues.measurement}
+                                >
+                                    <option disabled hidden></option>
+                                    {sortedMeasurements.map((measurement) => (
+                                        <option key={measurement} id={measurement}>{measurement}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <button onClick={handleAddIngredient}>Add Ingredient</button>
+                        <br />
+                        <button onClick={handleSubmitRecipe}>Add Recipe</button>
+                    </form>
+                </div>
+                <div class="level-right" className="p-4 mt-8 rounded-md bg-stone-100" id="add-recipe-ingredients">
+                    <ul>
+                        {recipeState.ingredients.map((ingredient) => (
+                            <li key={ingredient.name} >
+                                <span>{ingredient.name} - {ingredient.quantity} {ingredient.measurement}    </span>
+                                <button
+                                    onClick={() => handleDeleteIngredient(ingredient.name)}
+                                >
+                                    Delete 
+                                </button>
+                                <br />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
         </>
     )
 }
