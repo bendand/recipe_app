@@ -1,2 +1,2 @@
 # recipe_app
-recipe app with flask backend and react frontend
+Recipe generator application that takes user-entered recipes and runs them through a reducer function using Pint for Flask, created condensed shopping list for users
